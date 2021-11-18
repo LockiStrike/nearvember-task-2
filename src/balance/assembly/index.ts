@@ -19,7 +19,6 @@ export class Contract {
     return `Your balance: ${this.balance}`;
   }
 
-
   getHistory(): string {
     const history = '';
 
@@ -42,7 +41,7 @@ export class Contract {
     }
 
     if (isKeyInStorage(index)) {
-      return this.buildStringFromHistoryRecord(parsedIndex, storage.get<HistoryRecord>(index.toString()) as HistoryRecord);
+      return this.buildStringFromHistoryRecord(parsedIndex, storage.get<HistoryRecord>(index.toString()));
     } else {
       return `🚫 Key [ ${index} ] not found in storage. ( ${this.storageReport()} )`
     }
@@ -64,7 +63,8 @@ export class Contract {
 
     this.lastIndex++;
     const newBalance = this.balance - amount;
-    storage.set<HistoryRecord>(this.lastIndex.toString(), {action: 'spent', amount, note, newBalance});
+    const record = new HistoryRecord(amount, newBalance, 'spent', note);
+    storage.set<HistoryRecord>(this.lastIndex.toString(), record);
     this.balance = newBalance;
     return `✅ Data saved. ( ${this.storageReport()} )`
   }
@@ -81,7 +81,8 @@ export class Contract {
 
     this.lastIndex++;
     const newBalance = this.balance + amount;
-    storage.set<HistoryRecord>(this.lastIndex.toString(), {action: 'received', amount, note, newBalance})
+    const record = new HistoryRecord(amount, newBalance, 'receive', note);
+    storage.set<HistoryRecord>(this.lastIndex.toString(), record)
     this.balance = newBalance;
     return `✅ Data saved. ( ${this.storageReport()} )`
   }
@@ -99,7 +100,11 @@ export class Contract {
     return `storage [ ${Context.storageUsage} bytes ]`
   }
 
-  private buildStringFromHistoryRecord(index: number, record: HistoryRecord): string {
+  private buildStringFromHistoryRecord(index: number, record: HistoryRecord | null): string {
+    if (!record) {
+      return '';
+    }
+
     return `[${index}]. ${record.action} ${record.amount}, newBalance: ${record.newBalance}. Note: ${record.note} \n`;
   }
 }
