@@ -14,12 +14,12 @@ export class Contract {
   private balance: number = 0.0;
   private lastIndex: number = 0;
 
-  // return the string 'hello world'
+
   getBalance(): string {
     return `Your balance: ${this.balance}`;
   }
 
-  // read the given key from account (contract) storage
+
   getHistory(): string {
     const history = '';
 
@@ -48,7 +48,6 @@ export class Contract {
     }
   }
 
-  // write the given value at the given key to account (contract) storage
   @mutateState()
   spent(amount: number, note: string): string {
     if (this.isAmountNegative(amount)) {
@@ -95,7 +94,7 @@ export class Contract {
     return !!note && note.length > this.NOTE_LENGTH_LIMIT;
   }
 
-// private helper method used by read() and write() above
+
   private storageReport(): string {
     return `storage [ ${Context.storageUsage} bytes ]`
   }
